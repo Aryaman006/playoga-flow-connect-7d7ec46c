@@ -25,6 +25,7 @@ import {
   Crown,
   Sparkles,
   Settings,
+  Video,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -35,6 +36,7 @@ interface UserLayoutProps {
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/browse', label: 'Browse', icon: Search },
+  { href: '/profile', label: 'My Videos', icon: Video },
   { href: '/live', label: 'Live Classes', icon: Calendar },
   { href: '/wishlist', label: 'Wishlist', icon: Heart },
   { href: '/history', label: 'History', icon: History },

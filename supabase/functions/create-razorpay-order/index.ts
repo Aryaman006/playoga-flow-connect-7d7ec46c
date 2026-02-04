@@ -76,6 +76,8 @@ serve(async (req) => {
 
     // Create Razorpay order
     const credentials = btoa(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`);
+    const shortUserId = user.id.substring(0, 8);
+    const receipt = `rcpt_${shortUserId}_${Date.now()}`;
     
     const orderResponse = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
@@ -86,7 +88,7 @@ serve(async (req) => {
       body: JSON.stringify({
         amount: amountInPaise,
         currency: "INR",
-        receipt: `receipt_${user.id}_${Date.now()}`,
+        receipt: receipt,
         notes: {
           user_id: user.id,
           coupon_id: couponId,

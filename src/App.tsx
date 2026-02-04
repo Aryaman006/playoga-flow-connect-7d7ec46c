@@ -16,6 +16,7 @@ import SubscribePage from "./pages/SubscribePage";
 import LiveClassesPage from "./pages/LiveClassesPage";
 import WishlistPage from "./pages/WishlistPage";
 import HistoryPage from "./pages/HistoryPage";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/live" element={<LiveClassesPage />} />
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={

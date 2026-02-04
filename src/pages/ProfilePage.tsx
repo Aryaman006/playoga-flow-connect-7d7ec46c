@@ -26,7 +26,6 @@ import {
   LogOut,
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { MyVideosSection } from '@/components/profile/MyVideosSection';
 
 interface Profile {
   id: string;
@@ -387,9 +386,6 @@ const ProfilePage: React.FC = () => {
               </Card>
             </div>
           </div>
-
-          {/* My Videos Section */}
-          <MyVideosSection />
         </div>
       </div>
     </UserLayout>

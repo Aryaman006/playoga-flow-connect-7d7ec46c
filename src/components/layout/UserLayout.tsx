@@ -36,7 +36,7 @@ interface UserLayoutProps {
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/browse', label: 'Browse', icon: Search },
-  { href: '/profile', label: 'My Videos', icon: Video },
+  { href: '/my-videos', label: 'My Videos', icon: Video },
   { href: '/live', label: 'Live', icon: Calendar },
 ];
 

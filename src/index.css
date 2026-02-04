@@ -2,95 +2,129 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Playoga Design System - Wellness-Inspired Theme */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Warm cream background */
+    --background: 40 33% 97%;
+    --foreground: 25 30% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Cards with subtle warmth */
+    --card: 40 30% 99%;
+    --card-foreground: 25 30% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 40 30% 99%;
+    --popover-foreground: 25 30% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Terracotta primary - yoga mat inspired */
+    --primary: 16 65% 55%;
+    --primary-foreground: 40 30% 99%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Sage green secondary */
+    --secondary: 150 25% 92%;
+    --secondary-foreground: 150 40% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted earth tones */
+    --muted: 40 20% 94%;
+    --muted-foreground: 25 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Forest green accent */
+    --accent: 160 35% 40%;
+    --accent-foreground: 40 30% 99%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Warm red for destructive */
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 40 30% 99%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 20% 88%;
+    --input: 30 20% 88%;
+    --ring: 16 65% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Custom Playoga colors */
+    --terracotta: 16 65% 55%;
+    --terracotta-light: 16 60% 75%;
+    --terracotta-dark: 16 70% 40%;
+    
+    --sage: 150 25% 65%;
+    --sage-light: 150 25% 85%;
+    --sage-dark: 150 35% 35%;
+    
+    --forest: 160 35% 30%;
+    --forest-light: 160 30% 50%;
+    
+    --gold: 42 80% 55%;
+    --gold-light: 42 70% 75%;
+    
+    --cream: 40 33% 97%;
+    --cream-dark: 40 25% 90%;
+    
+    --charcoal: 25 30% 15%;
+    --charcoal-light: 25 20% 35%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Sidebar - warm neutrals */
+    --sidebar-background: 40 25% 98%;
+    --sidebar-foreground: 25 30% 25%;
+    --sidebar-primary: 16 65% 55%;
+    --sidebar-primary-foreground: 40 30% 99%;
+    --sidebar-accent: 150 20% 94%;
+    --sidebar-accent-foreground: 150 40% 25%;
+    --sidebar-border: 30 20% 90%;
+    --sidebar-ring: 16 65% 55%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Success & warning */
+    --success: 150 60% 40%;
+    --success-foreground: 40 30% 99%;
+    --warning: 42 80% 50%;
+    --warning-foreground: 25 30% 15%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Gradients */
+    --gradient-warm: linear-gradient(135deg, hsl(16 65% 55%) 0%, hsl(42 80% 55%) 100%);
+    --gradient-calm: linear-gradient(135deg, hsl(150 25% 65%) 0%, hsl(160 35% 40%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(16 60% 75%) 0%, hsl(40 33% 97%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(25 30% 15%) 0%, hsl(16 70% 40%) 50%, hsl(42 80% 55%) 100%);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 25 30% 8%;
+    --foreground: 40 25% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 25 25% 12%;
+    --card-foreground: 40 25% 95%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 25 25% 12%;
+    --popover-foreground: 40 25% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 16 60% 60%;
+    --primary-foreground: 25 30% 10%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 150 20% 20%;
+    --secondary-foreground: 150 30% 80%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 25 20% 18%;
+    --muted-foreground: 30 15% 60%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 160 30% 45%;
+    --accent-foreground: 40 30% 99%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 55% 45%;
+    --destructive-foreground: 40 30% 99%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 25 20% 20%;
+    --input: 25 20% 20%;
+    --ring: 16 60% 60%;
+
+    --sidebar-background: 25 25% 10%;
+    --sidebar-foreground: 40 20% 90%;
+    --sidebar-primary: 16 60% 60%;
+    --sidebar-primary-foreground: 25 30% 10%;
+    --sidebar-accent: 25 20% 18%;
+    --sidebar-accent-foreground: 40 20% 90%;
+    --sidebar-border: 25 20% 18%;
+    --sidebar-ring: 16 60% 60%;
   }
 }
 
@@ -100,6 +134,195 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+    @apply font-semibold tracking-tight;
+  }
+}
+
+@layer components {
+  /* Organic shape decorations */
+  .organic-blob {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  .organic-blob-2 {
+    border-radius: 30% 70% 70% 30% / 30% 52% 48% 70%;
+  }
+
+  /* Glass morphism cards */
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border/50 shadow-lg;
+  }
+
+  /* Premium content indicator */
+  .premium-badge {
+    @apply bg-gradient-to-r from-gold to-gold-light text-charcoal px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  /* Animated gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-terracotta via-gold to-terracotta;
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease infinite;
+  }
+
+  /* Video card hover effect */
+  .video-card {
+    @apply relative overflow-hidden rounded-2xl transition-all duration-500 ease-out;
+  }
+
+  .video-card:hover {
+    @apply shadow-2xl scale-[1.02];
+  }
+
+  .video-card::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-charcoal/80 via-transparent to-transparent opacity-0 transition-opacity duration-300;
+  }
+
+  .video-card:hover::after {
+    @apply opacity-100;
+  }
+
+  /* Stat card */
+  .stat-card {
+    @apply relative overflow-hidden p-6 rounded-2xl bg-card border border-border/50;
+  }
+
+  .stat-card::before {
+    content: '';
+    @apply absolute -top-12 -right-12 w-24 h-24 rounded-full opacity-20;
+    background: var(--gradient-warm);
+  }
+
+  /* Navigation link styles */
+  .nav-link {
+    @apply relative text-muted-foreground hover:text-foreground transition-colors duration-200;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-full;
+  }
+
+  /* Breathing animation for wellness feel */
+  .breathe {
+    animation: breathe 4s ease-in-out infinite;
+  }
+
+  /* Pulse glow for live indicators */
+  .live-pulse {
+    @apply relative;
+  }
+
+  .live-pulse::before {
+    content: '';
+    @apply absolute inset-0 rounded-full bg-destructive animate-ping opacity-50;
+  }
+
+  /* Progress bar with glow */
+  .progress-glow {
+    @apply relative overflow-hidden;
+  }
+
+  .progress-glow::after {
+    content: '';
+    @apply absolute top-0 left-0 h-full w-full;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shimmer 2s infinite;
+  }
+}
+
+@layer utilities {
+  /* Custom spacing for sections */
+  .section-padding {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  /* Container with max width */
+  .content-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Text shadows for better readability on images */
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+}
+
+/* Keyframe animations */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-terracotta/50 rounded-full hover:bg-terracotta/70 transition-colors;
+}
+
+/* Focus visible styles */
+*:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
 }

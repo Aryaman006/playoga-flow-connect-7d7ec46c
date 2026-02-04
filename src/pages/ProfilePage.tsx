@@ -24,13 +24,9 @@ import {
   X,
   Loader2,
   LogOut,
-  Play,
-  Clock,
-  Video,
-  ArrowRight,
 } from 'lucide-react';
-import { Progress } from '@/components/ui/progress';
 import { format } from 'date-fns';
+import { MyVideosSection } from '@/components/profile/MyVideosSection';
 
 interface Profile {
   id: string;
@@ -47,27 +43,6 @@ interface Subscription {
   expires_at: string | null;
   starts_at: string | null;
 }
-
-interface WatchProgressItem {
-  id: string;
-  video_id: string;
-  watched_seconds: number | null;
-  completed: boolean | null;
-  last_watched_at: string | null;
-  videos: {
-    id: string;
-    title: string;
-    thumbnail_url: string | null;
-    duration_seconds: number;
-    is_premium: boolean | null;
-  };
-}
-
-const formatDuration = (seconds: number): string => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, '0')}`;
-};
 
 const ProfilePage: React.FC = () => {
   const { user, hasActiveSubscription, signOut } = useAuth();
@@ -135,44 +110,6 @@ const ProfilePage: React.FC = () => {
         totalMinutes: Math.round(totalSeconds / 60),
         completed: data.filter((p) => p.completed).length,
       };
-    },
-    enabled: !!user,
-  });
-
-  // My Videos - Continue Watching & Recently Watched
-  const { data: myVideos } = useQuery({
-    queryKey: ['my-videos', user?.id],
-    queryFn: async () => {
-      if (!user) return { continueWatching: [], recentlyCompleted: [] };
-      const { data, error } = await supabase
-        .from('watch_progress')
-        .select(`
-          id,
-          video_id,
-          watched_seconds,
-          completed,
-          last_watched_at,
-          videos (
-            id,
-            title,
-            thumbnail_url,
-            duration_seconds,
-            is_premium
-          )
-        `)
-        .eq('user_id', user.id)
-        .order('last_watched_at', { ascending: false })
-        .limit(10);
-      
-      if (error) throw error;
-      
-      const items = data as WatchProgressItem[];
-      const continueWatching = items.filter(
-        (item) => !item.completed && (item.watched_seconds || 0) > 0
-      ).slice(0, 4);
-      const recentlyCompleted = items.filter((item) => item.completed).slice(0, 4);
-      
-      return { continueWatching, recentlyCompleted };
     },
     enabled: !!user,
   });
@@ -400,7 +337,7 @@ const ProfilePage: React.FC = () => {
                       <p className="text-sm text-muted-foreground">
                         Upgrade to access all premium content
                       </p>
-                      <Button asChild size="sm" className="w-full bg-gradient-warm">
+                      <Button asChild size="sm" className="w-full bg-gradient-to-r from-primary to-gold hover:opacity-90">
                         <Link to="/subscribe">Upgrade Now</Link>
                       </Button>
                     </div>
@@ -452,140 +389,7 @@ const ProfilePage: React.FC = () => {
           </div>
 
           {/* My Videos Section */}
-          <div className="mt-10">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="font-display text-2xl font-bold flex items-center gap-2">
-                <Video className="w-6 h-6 text-primary" />
-                My Videos
-              </h2>
-              <Button variant="ghost" asChild>
-                <Link to="/history">
-                  View All
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Link>
-              </Button>
-            </div>
-
-            {!myVideos?.continueWatching?.length && !myVideos?.recentlyCompleted?.length ? (
-              <Card className="p-8 text-center">
-                <Play className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="font-semibold text-lg mb-2">No videos watched yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Start exploring our video library to track your progress here
-                </p>
-                <Button asChild>
-                  <Link to="/browse">Browse Videos</Link>
-                </Button>
-              </Card>
-            ) : (
-              <>
-                {/* Continue Watching */}
-                {myVideos?.continueWatching && myVideos.continueWatching.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-lg font-semibold mb-4 text-muted-foreground">
-                      Continue Watching
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {myVideos.continueWatching.map((item) => {
-                        const progressPercent = item.videos.duration_seconds > 0
-                          ? Math.min(100, ((item.watched_seconds || 0) / item.videos.duration_seconds) * 100)
-                          : 0;
-                        
-                        return (
-                          <Card
-                            key={item.id}
-                            className="overflow-hidden cursor-pointer group"
-                            onClick={() => navigate(`/video/${item.videos.id}`)}
-                          >
-                            <div
-                              className="relative h-28 bg-cover bg-center"
-                              style={{
-                                backgroundImage: item.videos.thumbnail_url
-                                  ? `url(${item.videos.thumbnail_url})`
-                                  : 'linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground)))',
-                              }}
-                            >
-                              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <Play className="w-8 h-8 text-white" />
-                              </div>
-                              {item.videos.is_premium && (
-                                <Badge className="absolute top-2 right-2 bg-gold text-charcoal text-xs">
-                                  <Crown className="w-3 h-3" />
-                                </Badge>
-                              )}
-                              <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/50">
-                                <div
-                                  className="h-full bg-primary"
-                                  style={{ width: `${progressPercent}%` }}
-                                />
-                              </div>
-                            </div>
-                            <CardContent className="p-3">
-                              <p className="text-sm font-medium line-clamp-2">
-                                {item.videos.title}
-                              </p>
-                              <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                                <Clock className="w-3 h-3" />
-                                <span>{Math.round(progressPercent)}% complete</span>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-
-                {/* Recently Completed */}
-                {myVideos?.recentlyCompleted && myVideos.recentlyCompleted.length > 0 && (
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 text-muted-foreground">
-                      Recently Completed
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      {myVideos.recentlyCompleted.map((item) => (
-                        <Card
-                          key={item.id}
-                          className="overflow-hidden cursor-pointer group"
-                          onClick={() => navigate(`/video/${item.videos.id}`)}
-                        >
-                          <div
-                            className="relative h-28 bg-cover bg-center"
-                            style={{
-                              backgroundImage: item.videos.thumbnail_url
-                                ? `url(${item.videos.thumbnail_url})`
-                                : 'linear-gradient(135deg, hsl(var(--muted)), hsl(var(--muted-foreground)))',
-                            }}
-                          >
-                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Play className="w-8 h-8 text-white" />
-                            </div>
-                            {item.videos.is_premium && (
-                              <Badge className="absolute top-2 right-2 bg-gold text-charcoal text-xs">
-                                <Crown className="w-3 h-3" />
-                              </Badge>
-                            )}
-                            <Badge className="absolute bottom-2 left-2 bg-success text-white text-xs">
-                              Completed
-                            </Badge>
-                          </div>
-                          <CardContent className="p-3">
-                            <p className="text-sm font-medium line-clamp-2">
-                              {item.videos.title}
-                            </p>
-                            <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                              <Clock className="w-3 h-3" />
-                              <span>{formatDuration(item.videos.duration_seconds)}</span>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+          <MyVideosSection />
         </div>
       </div>
     </UserLayout>

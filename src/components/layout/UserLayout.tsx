@@ -14,7 +14,6 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import {
   Home,
-  Play,
   Search,
   Heart,
   History,
@@ -26,6 +25,7 @@ import {
   Sparkles,
   Settings,
   Video,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,7 +37,10 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/browse', label: 'Browse', icon: Search },
   { href: '/profile', label: 'My Videos', icon: Video },
-  { href: '/live', label: 'Live Classes', icon: Calendar },
+  { href: '/live', label: 'Live', icon: Calendar },
+];
+
+const secondaryNavItems = [
   { href: '/wishlist', label: 'Wishlist', icon: Heart },
   { href: '/history', label: 'History', icon: History },
 ];
@@ -60,21 +63,21 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-background/95 backdrop-blur-xl">
         <div className="content-container">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-16 items-center justify-between gap-4">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-warm flex items-center justify-center">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
                 <span className="text-white font-display font-bold text-xl">P</span>
               </div>
-              <span className="font-display text-2xl font-semibold text-foreground">
+              <span className="font-display text-2xl font-semibold text-foreground hidden sm:block">
                 Playoga
               </span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-1">
+            <nav className="hidden lg:flex items-center bg-muted/50 rounded-full px-2 py-1.5">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.href;
@@ -83,13 +86,13 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                     key={item.href}
                     to={item.href}
                     className={cn(
-                      'flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
+                      'flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200',
                       isActive
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-background/80'
                     )}
                   >
-                    <Icon size={18} />
+                    <Icon size={16} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -97,28 +100,51 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
             </nav>
 
             {/* Right Side */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Secondary Nav (Desktop) */}
+              <div className="hidden md:flex items-center gap-1">
+                {secondaryNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      to={item.href}
+                      className={cn(
+                        'p-2 rounded-lg transition-colors',
+                        isActive
+                          ? 'text-primary bg-primary/10'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                      )}
+                      title={item.label}
+                    >
+                      <Icon size={20} />
+                    </Link>
+                  );
+                })}
+              </div>
+
               {/* Yogic Points */}
-              <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-gold/10 text-gold">
-                <Sparkles size={16} />
-                <span className="text-sm font-semibold">{yogicPoints}</span>
+              <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold/10 border border-gold/20">
+                <Sparkles size={14} className="text-gold" />
+                <span className="text-sm font-semibold text-gold">{yogicPoints}</span>
               </div>
 
               {/* Subscription Badge */}
               {hasActiveSubscription && (
-                <div className="hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full bg-accent/10 text-accent">
-                  <Crown size={16} />
-                  <span className="text-xs font-semibold">Premium</span>
+                <div className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-primary/10 to-gold/10 border border-primary/20">
+                  <Crown size={14} className="text-primary" />
+                  <span className="text-xs font-semibold text-primary">Pro</span>
                 </div>
               )}
 
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full ring-2 ring-border hover:ring-primary/50 transition-all">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src="" alt="Avatar" />
-                        <AvatarFallback className="bg-primary text-primary-foreground">
+                        <AvatarFallback className="bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-medium">
                           {getInitials(user.email || '')}
                         </AvatarFallback>
                       </Avatar>
@@ -164,11 +190,11 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <Button variant="ghost" asChild>
+                <div className="flex items-center gap-2">
+                  <Button variant="ghost" asChild size="sm">
                     <Link to="/login">Sign in</Link>
                   </Button>
-                  <Button asChild className="bg-gradient-warm">
+                  <Button asChild size="sm" className="bg-gradient-to-r from-primary to-gold hover:opacity-90 shadow-lg shadow-primary/20">
                     <Link to="/signup">Get Started</Link>
                   </Button>
                 </div>
@@ -176,34 +202,76 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
 
               {/* Mobile Menu */}
               <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-                <SheetTrigger asChild className="md:hidden">
-                  <Button variant="ghost" size="icon">
-                    <Menu className="h-6 w-6" />
+                <SheetTrigger asChild className="lg:hidden">
+                  <Button variant="ghost" size="icon" className="h-10 w-10">
+                    <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent side="right" className="w-72">
-                  <nav className="flex flex-col space-y-2 mt-8">
-                    {navItems.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = location.pathname === item.href;
-                      return (
-                        <Link
-                          key={item.href}
-                          to={item.href}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className={cn(
-                            'flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-colors',
-                            isActive
-                              ? 'bg-primary/10 text-primary'
-                              : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-                          )}
-                        >
-                          <Icon size={20} />
-                          <span>{item.label}</span>
-                        </Link>
-                      );
-                    })}
-                  </nav>
+                <SheetContent side="right" className="w-80 p-0">
+                  <div className="flex flex-col h-full">
+                    {/* Mobile Menu Header */}
+                    <div className="flex items-center justify-between p-4 border-b border-border">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold flex items-center justify-center">
+                          <span className="text-white font-display font-bold text-xl">P</span>
+                        </div>
+                        <span className="font-display text-xl font-semibold">Playoga</span>
+                      </div>
+                      <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+                        <X className="h-5 w-5" />
+                      </Button>
+                    </div>
+
+                    {/* Points Banner */}
+                    <div className="mx-4 mt-4 p-4 rounded-xl bg-gradient-to-r from-gold/10 to-primary/10 border border-gold/20">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="h-5 w-5 text-gold" />
+                          <span className="font-medium">Yogic Points</span>
+                        </div>
+                        <span className="text-xl font-bold text-gold">{yogicPoints}</span>
+                      </div>
+                    </div>
+
+                    {/* Navigation */}
+                    <nav className="flex flex-col gap-1 p-4 flex-1">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                        Menu
+                      </p>
+                      {[...navItems, ...secondaryNavItems].map((item) => {
+                        const Icon = item.icon;
+                        const isActive = location.pathname === item.href;
+                        return (
+                          <Link
+                            key={item.href}
+                            to={item.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={cn(
+                              'flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all',
+                              isActive
+                                ? 'bg-primary text-primary-foreground shadow-md'
+                                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                            )}
+                          >
+                            <Icon size={20} />
+                            <span>{item.label}</span>
+                          </Link>
+                        );
+                      })}
+                    </nav>
+
+                    {/* Mobile Menu Footer */}
+                    {!hasActiveSubscription && (
+                      <div className="p-4 border-t border-border">
+                        <Button asChild className="w-full bg-gradient-to-r from-primary to-gold hover:opacity-90">
+                          <Link to="/subscribe" onClick={() => setMobileMenuOpen(false)}>
+                            <Crown className="mr-2 h-4 w-4" />
+                            Upgrade to Premium
+                          </Link>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </SheetContent>
               </Sheet>
             </div>
@@ -217,9 +285,9 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
       {/* Footer */}
       <footer className="border-t border-border mt-20 py-12 bg-muted/30">
         <div className="content-container">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-warm flex items-center justify-center">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-gold flex items-center justify-center">
                 <span className="text-white font-display font-bold">P</span>
               </div>
               <span className="font-display text-xl font-semibold">Playoga</span>

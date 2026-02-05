@@ -1,5 +1,6 @@
 import React from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
+import playogaLogo from '@/assets/playoga-logo.png';
 
 const LoginPage: React.FC = () => {
   return (
@@ -11,10 +12,11 @@ const LoginPage: React.FC = () => {
       <div className="relative z-10 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-gradient-warm flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-display font-bold text-3xl">P</span>
-          </div>
-          <h1 className="font-display text-3xl font-bold text-foreground">Playoga</h1>
+          <img 
+            src={playogaLogo} 
+            alt="Playoga" 
+            className="h-16 w-auto mx-auto mb-4 object-contain"
+          />
           <p className="text-muted-foreground mt-2">Your journey to inner peace</p>
         </div>
         

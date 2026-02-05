@@ -23,11 +23,11 @@ import {
   Menu,
   Crown,
   Sparkles,
-  Settings,
   Video,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import playogaLogo from '@/assets/playoga-logo.png';
 
 interface UserLayoutProps {
   children: React.ReactNode;
@@ -46,7 +46,7 @@ const secondaryNavItems = [
 ];
 
 export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
-  const { user, signOut, hasActiveSubscription, yogicPoints, isAdmin } = useAuth();
+  const { user, signOut, hasActiveSubscription, yogicPoints } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -68,12 +68,11 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
           <div className="flex h-16 items-center justify-between gap-4">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-shadow">
-                <span className="text-white font-display font-bold text-xl">P</span>
-              </div>
-              <span className="font-display text-2xl font-semibold text-foreground hidden sm:block">
-                Playoga
-              </span>
+              <img 
+                src={playogaLogo} 
+                alt="Playoga" 
+                className="h-10 sm:h-12 w-auto object-contain"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -160,14 +159,6 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {isAdmin && (
-                      <DropdownMenuItem asChild>
-                        <Link to="/admin" className="flex items-center">
-                          <Settings className="mr-2 h-4 w-4" />
-                          Admin Dashboard
-                        </Link>
-                      </DropdownMenuItem>
-                    )}
                     <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex items-center">
                         <User className="mr-2 h-4 w-4" />
@@ -212,10 +203,11 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                     {/* Mobile Menu Header */}
                     <div className="flex items-center justify-between p-4 border-b border-border">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-gold flex items-center justify-center">
-                          <span className="text-white font-display font-bold text-xl">P</span>
-                        </div>
-                        <span className="font-display text-xl font-semibold">Playoga</span>
+                        <img 
+                          src={playogaLogo} 
+                          alt="Playoga" 
+                          className="h-8 w-auto object-contain"
+                        />
                       </div>
                       <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
                         <X className="h-5 w-5" />
@@ -286,12 +278,11 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
       <footer className="border-t border-border mt-20 py-12 bg-muted/30">
         <div className="content-container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-gold flex items-center justify-center">
-                <span className="text-white font-display font-bold">P</span>
-              </div>
-              <span className="font-display text-xl font-semibold">Playoga</span>
-            </div>
+            <img 
+              src={playogaLogo} 
+              alt="Playoga" 
+              className="h-8 w-auto object-contain"
+            />
             <p className="text-sm text-muted-foreground">
               © 2024 Playoga. Your journey to wellness begins here.
             </p>

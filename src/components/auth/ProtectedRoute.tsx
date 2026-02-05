@@ -5,16 +5,14 @@ import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requireAdmin?: boolean;
   requireSubscription?: boolean;
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  requireAdmin = false,
   requireSubscription = false,
 }) => {
-  const { user, isLoading, isAdmin, hasActiveSubscription } = useAuth();
+  const { user, isLoading, hasActiveSubscription } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -30,10 +28,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (requireAdmin && !isAdmin) {
-    return <Navigate to="/" replace />;
   }
 
   if (requireSubscription && !hasActiveSubscription) {

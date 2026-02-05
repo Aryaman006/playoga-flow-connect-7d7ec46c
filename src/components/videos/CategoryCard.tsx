@@ -41,13 +41,6 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-charcoal/90 via-charcoal/40 to-transparent" />
 
-      {/* Featured Badge */}
-      {isFeatured && (
-        <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-gold text-charcoal text-xs font-semibold uppercase tracking-wider">
-          Featured
-        </div>
-      )}
-
       {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-6">
         <h3 className="font-display text-2xl font-semibold text-white text-shadow">

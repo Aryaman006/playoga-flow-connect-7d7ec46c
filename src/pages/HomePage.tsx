@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { ArrowRight, Play, Crown, Sparkles, Calendar, TrendingUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import WhatsAppButton from '@/components/WhatsAppButton';
+import heroImage from '@/assets/hero2.png';
 
 interface Category {
   id: string;
@@ -108,11 +110,18 @@ const HomePage: React.FC = () => {
 
   return (
     <UserLayout>
+      {/* WhatsApp Button */}
+      <WhatsAppButton phoneNumber="919876543210" />
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-charcoal via-charcoal to-terracotta-dark py-20 lg:py-32">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full bg-terracotta/20 blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-sage/10 blur-3xl translate-y-1/2 -translate-x-1/2" />
+      <section className="relative overflow-hidden py-20 lg:py-32">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        />
+        {/* Dark Overlay for text readability */}
+        <div className="absolute inset-0 bg-charcoal/60" />
         
         <div className="content-container relative z-10">
           <div className="max-w-3xl">

@@ -7,7 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { format, isPast, isFuture, isToday } from 'date-fns';
+import { format, isPast, isFuture, isToday, addMinutes } from 'date-fns';
 import {
   Calendar,
   Clock,
@@ -122,19 +122,31 @@ const LiveClassesPage: React.FC = () => {
     }
   };
 
+  // Helper to check if session has ended (scheduled_at + duration has passed)
+  const isSessionEnded = (session: LiveSession) => {
+    const sessionEnd = addMinutes(new Date(session.scheduled_at), session.duration_minutes || 60);
+    return session.is_completed || isPast(sessionEnd);
+  };
+
+  // Helper to check if session is in progress (started but not ended)
+  const isSessionInProgress = (session: LiveSession) => {
+    const sessionStart = new Date(session.scheduled_at);
+    const sessionEnd = addMinutes(sessionStart, session.duration_minutes || 60);
+    return isPast(sessionStart) && !isPast(sessionEnd) && !session.is_completed;
+  };
+
   const upcomingSessions = sessions?.filter(
     (s) => !s.is_completed && isFuture(new Date(s.scheduled_at))
   );
-  const liveSessions = sessions?.filter((s) => s.is_live);
-  const pastSessions = sessions?.filter(
-    (s) => s.is_completed || isPast(new Date(s.scheduled_at))
-  );
+  const liveSessions = sessions?.filter((s) => s.is_live || isSessionInProgress(s));
+  const pastSessions = sessions?.filter((s) => isSessionEnded(s));
 
   const renderSession = (session: LiveSession) => {
     const isRegistered = registeredSessionIds.has(session.id);
     const sessionDate = new Date(session.scheduled_at);
-    const canJoin = session.is_live && isRegistered;
-    const isPastSession = isPast(sessionDate) || session.is_completed;
+    const inProgress = session.is_live || isSessionInProgress(session);
+    const canJoin = inProgress && isRegistered;
+    const isPastSession = isSessionEnded(session);
 
     return (
       <Card key={session.id} className="overflow-hidden">
@@ -147,11 +159,11 @@ const LiveClassesPage: React.FC = () => {
                 : 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-foreground)))',
             }}
           />
-          {session.is_live && (
+          {(session.is_live || inProgress) && (
             <div className="absolute top-3 left-3">
               <Badge className="bg-red-500 text-white animate-pulse">
                 <Radio className="w-3 h-3 mr-1" />
-                LIVE NOW
+                {session.is_live ? 'LIVE NOW' : 'IN PROGRESS'}
               </Badge>
             </div>
           )}

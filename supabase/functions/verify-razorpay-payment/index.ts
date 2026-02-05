@@ -1,11 +1,26 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+ import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
+ 
+ // Allowed origins for CORS - restrict to known domains
+ const ALLOWED_ORIGINS = [
+   "https://serene-asana-online.lovable.app",
+   "https://id-preview--059236ff-a7ad-4b7c-949d-977b878b9f3e.lovable.app",
+   "http://localhost:5173",
+   "http://localhost:3000",
+   "http://localhost:8080",
+ ];
+ 
+ function getCorsHeaders(origin: string | null): Record<string, string> {
+   const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) 
+     ? origin 
+     : ALLOWED_ORIGINS[0];
+   return {
+     "Access-Control-Allow-Origin": allowedOrigin,
+     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+     "Access-Control-Allow-Credentials": "true",
+   };
+ }
 
 async function verifySignature(
   orderId: string,
@@ -39,6 +54,9 @@ function generateInvoiceNumber(): string {
 }
 
 serve(async (req) => {
+   const origin = req.headers.get("origin");
+   const corsHeaders = getCorsHeaders(origin);
+ 
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -111,7 +129,11 @@ serve(async (req) => {
       .single();
 
     if (subError) {
-      console.error("Subscription update error:", subError);
+       console.error("Subscription operation failed", {
+         timestamp: new Date().toISOString(),
+         operation: "update",
+         errorType: "SUBSCRIPTION_ERROR",
+       });
       throw new Error("Failed to update subscription");
     }
 
@@ -135,7 +157,10 @@ serve(async (req) => {
       });
 
     if (paymentError) {
-      console.error("Payment record error:", paymentError);
+       console.error("Payment record operation failed", {
+         timestamp: new Date().toISOString(),
+         errorType: "PAYMENT_RECORD_ERROR",
+       });
       // Don't throw, subscription is already active
     }
 
@@ -175,8 +200,11 @@ serve(async (req) => {
       }
     );
   } catch (error: unknown) {
-    console.error("Error verifying payment:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+     console.error("Payment verification error", {
+       timestamp: new Date().toISOString(),
+       errorType: "VERIFICATION_ERROR",
+     });
+     const errorMessage = error instanceof Error ? error.message : "An error occurred";
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {

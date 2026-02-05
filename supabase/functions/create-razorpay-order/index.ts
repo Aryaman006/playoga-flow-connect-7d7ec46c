@@ -1,12 +1,30 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+ 
+ // Allowed origins for CORS - restrict to known domains
+ const ALLOWED_ORIGINS = [
+   "https://serene-asana-online.lovable.app",
+   "https://id-preview--059236ff-a7ad-4b7c-949d-977b878b9f3e.lovable.app",
+   "http://localhost:5173",
+   "http://localhost:3000",
+   "http://localhost:8080",
+ ];
+ 
+ function getCorsHeaders(origin: string | null): Record<string, string> {
+   const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) 
+     ? origin 
+     : ALLOWED_ORIGINS[0];
+   return {
+     "Access-Control-Allow-Origin": allowedOrigin,
+     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+     "Access-Control-Allow-Credentials": "true",
+   };
+ }
 
 serve(async (req) => {
+   const origin = req.headers.get("origin");
+   const corsHeaders = getCorsHeaders(origin);
+ 
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -100,9 +118,13 @@ serve(async (req) => {
     });
 
     if (!orderResponse.ok) {
-      const errorData = await orderResponse.text();
-      console.error("Razorpay order creation failed:", errorData);
-      throw new Error(`Failed to create Razorpay order: ${errorData}`);
+       const statusCode = orderResponse.status;
+       console.error("Order creation failed", {
+         timestamp: new Date().toISOString(),
+         errorType: "RAZORPAY_ORDER_ERROR",
+         statusCode,
+       });
+       throw new Error("Failed to create payment order");
     }
 
     const order = await orderResponse.json();
@@ -138,8 +160,11 @@ serve(async (req) => {
       }
     );
   } catch (error: unknown) {
-    console.error("Error creating order:", error);
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+     console.error("Order creation error", {
+       timestamp: new Date().toISOString(),
+       errorType: "ORDER_ERROR",
+     });
+     const errorMessage = error instanceof Error ? error.message : "An error occurred";
     return new Response(
       JSON.stringify({ error: errorMessage }),
       {

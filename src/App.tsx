@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -19,12 +18,6 @@ import HistoryPage from "./pages/HistoryPage";
 import ProfilePage from "./pages/ProfilePage";
 import MyVideosPage from "./pages/MyVideosPage";
 import NotFound from "./pages/NotFound";
-
-// Admin Pages
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminUsersPage from "./pages/admin/AdminUsersPage";
-import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
-import AdminVideosPage from "./pages/admin/AdminVideosPage";
 
 const queryClient = new QueryClient();
 
@@ -48,28 +41,6 @@ const App = () => (
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/my-videos" element={<MyVideosPage />} />
             <Route path="/profile" element={<ProfilePage />} />
-
-            {/* Admin Routes */}
-            <Route path="/admin" element={
-              <ProtectedRoute requireAdmin>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/users" element={
-              <ProtectedRoute requireAdmin>
-                <AdminUsersPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/categories" element={
-              <ProtectedRoute requireAdmin>
-                <AdminCategoriesPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/videos" element={
-              <ProtectedRoute requireAdmin>
-                <AdminVideosPage />
-              </ProtectedRoute>
-            } />
 
             {/* Catch-all */}
             <Route path="*" element={<NotFound />} />

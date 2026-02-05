@@ -6,7 +6,6 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   isLoading: boolean;
-  isAdmin: boolean;
   hasActiveSubscription: boolean;
   yogicPoints: number;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
@@ -30,23 +29,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
   const [yogicPoints, setYogicPoints] = useState(0);
-
-  const checkUserRole = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('admins')
-        .select('user_id')
-        .eq('user_id', userId)
-        .maybeSingle();
-      
-      setIsAdmin(!error && data !== null);
-    } catch (e) {
-      console.error('Error checking user role:', e);
-    }
-  };
 
   const checkSubscriptionStatus = async (userId: string) => {
     try {
@@ -106,12 +90,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (session?.user) {
           // Use setTimeout to avoid potential race conditions
           setTimeout(() => {
-            checkUserRole(session.user.id);
             checkSubscriptionStatus(session.user.id);
             fetchYogicPoints(session.user.id);
           }, 0);
         } else {
-          setIsAdmin(false);
           setHasActiveSubscription(false);
           setYogicPoints(0);
         }
@@ -126,7 +108,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        checkUserRole(session.user.id);
         checkSubscriptionStatus(session.user.id);
         fetchYogicPoints(session.user.id);
       }
@@ -177,7 +158,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         user,
         session,
         isLoading,
-        isAdmin,
         hasActiveSubscription,
         yogicPoints,
         signUp,

@@ -7,6 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 // Pages
 import HomePage from "./pages/HomePage";
+import MaintenancePage from "./pages/MaintenancePage"; // Temporary maintenance page
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import BrowsePage from "./pages/BrowsePage";
@@ -32,7 +33,11 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Public Routes */}
+            {/* TEMPORARY: Maintenance page - swap back to HomePage when ready */}
+            <Route path="/" element={<MaintenancePage />} />
+            {/* Original homepage - uncomment to restore:
             <Route path="/" element={<HomePage />} />
+            */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />

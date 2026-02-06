@@ -322,7 +322,7 @@ const SubscribePage: React.FC = () => {
                     variant="outline"
                     onClick={applyCoupon}
                     disabled={isApplyingCoupon}
-                    className="border-white/30 text-white hover:bg-white/10"
+                    className="border-white bg-white/20 text-white hover:bg-white/30 font-medium"
                   >
                     {isApplyingCoupon ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

@@ -27,8 +27,15 @@ export const LoginForm: React.FC = () => {
     setIsResettingPassword(true);
 
     try {
+      // Detect if on a custom domain (not lovable.app or lovableproject.com)
+      const isCustomDomain =
+        !window.location.hostname.includes('lovable.app') &&
+        !window.location.hostname.includes('lovableproject.com') &&
+        !window.location.hostname.includes('localhost');
+
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
+        ...(isCustomDomain && { skipBrowserRedirect: true }),
       });
 
       if (error) {

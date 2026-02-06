@@ -2,25 +2,21 @@
  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
  
- // Allowed origins for CORS - restrict to known domains
- const ALLOWED_ORIGINS = [
-   "https://serene-asana-online.lovable.app",
-   "https://id-preview--059236ff-a7ad-4b7c-949d-977b878b9f3e.lovable.app",
-   "http://localhost:5173",
-   "http://localhost:3000",
-   "http://localhost:8080",
- ];
- 
- function getCorsHeaders(origin: string | null): Record<string, string> {
-   const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) 
-     ? origin 
-     : ALLOWED_ORIGINS[0];
-   return {
-     "Access-Control-Allow-Origin": allowedOrigin,
-     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-     "Access-Control-Allow-Credentials": "true",
-   };
- }
+// CORS headers - allow all Lovable domains
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  // Allow Lovable preview domains, production domain, and localhost
+  const isAllowed = origin && (
+    origin.endsWith('.lovable.app') ||
+    origin.endsWith('.lovableproject.com') ||
+    origin.startsWith('http://localhost:')
+  );
+  
+  return {
+    "Access-Control-Allow-Origin": isAllowed ? origin : "https://serene-asana-online.lovable.app",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Access-Control-Allow-Credentials": "true",
+  };
+}
 
 async function verifySignature(
   orderId: string,

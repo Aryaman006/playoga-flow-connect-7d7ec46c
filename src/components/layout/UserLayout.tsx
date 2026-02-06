@@ -201,7 +201,7 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                 <SheetContent side="right" className="w-80 p-0">
                   <div className="flex flex-col h-full">
                     {/* Mobile Menu Header */}
-                    <div className="flex items-center justify-between p-4 border-b border-border">
+                    <div className="flex items-center p-4 border-b border-border">
                       <div className="flex items-center gap-3">
                         <img 
                           src={playogaLogo} 
@@ -209,9 +209,6 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                           className="h-8 w-auto object-contain"
                         />
                       </div>
-                      <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
-                        <X className="h-5 w-5" />
-                      </Button>
                     </div>
 
                     {/* Points Banner */}
@@ -253,16 +250,26 @@ export const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
                     </nav>
 
                     {/* Mobile Menu Footer */}
-                    {!hasActiveSubscription && (
-                      <div className="p-4 border-t border-border">
+                    <div className="p-4 border-t border-border space-y-2">
+                      {!hasActiveSubscription && (
                         <Button asChild className="w-full bg-gradient-to-r from-primary to-gold hover:opacity-90">
                           <Link to="/subscribe" onClick={() => setMobileMenuOpen(false)}>
                             <Crown className="mr-2 h-4 w-4" />
                             Upgrade to Premium
                           </Link>
                         </Button>
-                      </div>
-                    )}
+                      )}
+                      {user && (
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => { setMobileMenuOpen(false); handleSignOut(); }}
+                        >
+                          <LogOut className="mr-2 h-4 w-4" />
+                          Sign out
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </SheetContent>
               </Sheet>

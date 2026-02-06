@@ -7,88 +7,88 @@
 
 @layer base {
   :root {
-    /* Warm sunrise cream - #FFF8F0 */
-    --background: 30 100% 97%;
-    --foreground: 25 30% 15%;
+    /* Light warm cream - #FFFCF7 */
+    --background: 38 100% 98%;
+    --foreground: 30 25% 20%;
 
-    /* Cards with golden warmth */
-    --card: 35 80% 98%;
-    --card-foreground: 25 30% 15%;
+    /* Cards with soft golden warmth */
+    --card: 40 70% 99%;
+    --card-foreground: 30 25% 20%;
 
-    --popover: 35 80% 98%;
-    --popover-foreground: 25 30% 15%;
+    --popover: 40 70% 99%;
+    --popover-foreground: 30 25% 20%;
 
-    /* Primary Sunrise Gold - #E6A830 */
-    --primary: 42 78% 55%;
-    --primary-foreground: 25 30% 12%;
+    /* Primary Soft Gold - #F4C968 */
+    --primary: 43 85% 68%;
+    --primary-foreground: 30 40% 18%;
 
-    /* Secondary - soft peach */
-    --secondary: 30 60% 92%;
-    --secondary-foreground: 35 50% 30%;
+    /* Secondary - light peach */
+    --secondary: 35 55% 95%;
+    --secondary-foreground: 38 45% 35%;
 
-    /* Muted sunrise tones */
-    --muted: 35 40% 92%;
-    --muted-foreground: 25 20% 40%;
+    /* Muted soft tones */
+    --muted: 38 35% 94%;
+    --muted-foreground: 30 18% 45%;
 
-    /* Accent Amber - #F5B041 */
-    --accent: 38 90% 61%;
-    --accent-foreground: 25 30% 12%;
+    /* Accent Light Amber - #FFCF70 */
+    --accent: 42 100% 72%;
+    --accent-foreground: 30 40% 18%;
 
-    /* Warm coral for destructive */
-    --destructive: 8 70% 55%;
-    --destructive-foreground: 30 100% 97%;
+    /* Soft coral for destructive */
+    --destructive: 10 65% 60%;
+    --destructive-foreground: 38 100% 98%;
 
-    --border: 35 35% 88%;
-    --input: 35 35% 88%;
-    --ring: 42 78% 55%;
+    --border: 38 30% 90%;
+    --input: 38 30% 90%;
+    --ring: 43 85% 68%;
 
     --radius: 0.75rem;
 
-    /* Custom Playoga sunrise colors */
-    --terracotta: 25 65% 50%;
-    --terracotta-light: 28 55% 65%;
-    --terracotta-dark: 22 70% 38%;
+    /* Custom Playoga light sunrise colors */
+    --terracotta: 30 55% 65%;
+    --terracotta-light: 32 50% 78%;
+    --terracotta-dark: 28 55% 50%;
     
-    --sage: 40 45% 75%;
-    --sage-light: 42 50% 88%;
-    --sage-dark: 38 40% 55%;
+    --sage: 42 40% 82%;
+    --sage-light: 44 45% 92%;
+    --sage-dark: 40 35% 65%;
     
-    --forest: 30 45% 35%;
-    --forest-light: 32 40% 50%;
+    --forest: 35 40% 50%;
+    --forest-light: 37 35% 62%;
     
-    /* Brand Sunrise Gold - #F0A500 */
-    --gold: 42 100% 47%;
-    --gold-light: 45 85% 65%;
+    /* Brand Light Gold - #FFD966 */
+    --gold: 45 100% 70%;
+    --gold-light: 48 90% 82%;
     
-    /* Warm Cream - #FFF8F0 */
-    --cream: 30 100% 97%;
-    --cream-dark: 32 50% 92%;
+    /* Soft Cream - #FFFCF7 */
+    --cream: 38 100% 98%;
+    --cream-dark: 36 45% 94%;
     
-    /* Warm Charcoal - #3D2914 */
-    --charcoal: 30 50% 16%;
-    --charcoal-light: 28 25% 40%;
+    /* Warm Brown - #5C4A32 */
+    --charcoal: 32 30% 28%;
+    --charcoal-light: 30 20% 45%;
 
-    /* Sidebar - warm golden neutrals */
-    --sidebar-background: 35 70% 97%;
-    --sidebar-foreground: 28 35% 25%;
-    --sidebar-primary: 42 78% 55%;
-    --sidebar-primary-foreground: 25 30% 12%;
-    --sidebar-accent: 38 50% 92%;
-    --sidebar-accent-foreground: 35 50% 30%;
-    --sidebar-border: 35 40% 90%;
-    --sidebar-ring: 42 78% 55%;
+    /* Sidebar - light golden neutrals */
+    --sidebar-background: 40 60% 98%;
+    --sidebar-foreground: 32 30% 30%;
+    --sidebar-primary: 43 85% 68%;
+    --sidebar-primary-foreground: 30 40% 18%;
+    --sidebar-accent: 42 45% 94%;
+    --sidebar-accent-foreground: 38 45% 35%;
+    --sidebar-border: 38 35% 92%;
+    --sidebar-ring: 43 85% 68%;
 
     /* Success & warning */
-    --success: 145 55% 42%;
-    --success-foreground: 30 100% 97%;
-    --warning: 38 90% 55%;
-    --warning-foreground: 25 30% 15%;
+    --success: 150 50% 50%;
+    --success-foreground: 38 100% 98%;
+    --warning: 42 90% 68%;
+    --warning-foreground: 30 30% 20%;
 
-    /* Sunrise Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(42 78% 55%) 0%, hsl(25 65% 50%) 100%);
-    --gradient-calm: linear-gradient(135deg, hsl(45 85% 65%) 0%, hsl(42 78% 55%) 100%);
-    --gradient-sunset: linear-gradient(180deg, hsl(38 90% 75%) 0%, hsl(30 100% 97%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(25 65% 50%) 0%, hsl(42 100% 47%) 50%, hsl(45 85% 70%) 100%);
+    /* Light Sunrise Gradients */
+    --gradient-warm: linear-gradient(135deg, hsl(43 85% 68%) 0%, hsl(30 55% 65%) 100%);
+    --gradient-calm: linear-gradient(135deg, hsl(48 90% 82%) 0%, hsl(43 85% 68%) 100%);
+    --gradient-sunset: linear-gradient(180deg, hsl(42 100% 85%) 0%, hsl(38 100% 98%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(32 50% 70%) 0%, hsl(45 100% 70%) 50%, hsl(48 90% 85%) 100%);
   }
 
   .dark {

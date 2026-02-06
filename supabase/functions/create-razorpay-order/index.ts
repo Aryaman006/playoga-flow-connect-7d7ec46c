@@ -1,12 +1,18 @@
  import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  
-// CORS headers - allow all Lovable domains
+// CORS headers - allow all Lovable domains and custom domain
 function getCorsHeaders(origin: string | null): Record<string, string> {
-  // Allow Lovable preview domains, production domain, and localhost
+  // Allow Lovable preview domains, production domain, custom domain, and localhost
+  const allowedDomains = [
+    '.lovable.app',
+    '.lovableproject.com',
+    'playoga.in',
+    'www.playoga.in',
+  ];
+  
   const isAllowed = origin && (
-    origin.endsWith('.lovable.app') ||
-    origin.endsWith('.lovableproject.com') ||
+    allowedDomains.some(domain => origin.includes(domain)) ||
     origin.startsWith('http://localhost:')
   );
   

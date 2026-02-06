@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export const LoginForm: React.FC = () => {
@@ -13,8 +14,38 @@ export const LoginForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      toast.error('Please enter your email address first');
+      return;
+    }
+
+    setIsResettingPassword(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast.error('Failed to send reset email', {
+          description: error.message,
+        });
+      } else {
+        toast.success('Password reset email sent!', {
+          description: `Check your inbox at ${email}`,
+        });
+      }
+    } catch {
+      toast.error('An unexpected error occurred');
+    }
+
+    setIsResettingPassword(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,12 +90,14 @@ export const LoginForm: React.FC = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              <Link
-                to="/forgot-password"
-                className="text-xs text-primary hover:underline"
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={isResettingPassword}
+                className="text-xs text-primary hover:underline disabled:opacity-50"
               >
-                Forgot password?
-              </Link>
+                {isResettingPassword ? 'Sending...' : 'Forgot password?'}
+              </button>
             </div>
             <div className="relative">
               <Input

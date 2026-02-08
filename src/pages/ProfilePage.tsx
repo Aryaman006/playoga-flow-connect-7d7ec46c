@@ -39,6 +39,7 @@ const ProfilePage: React.FC = () => {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
 
+  // Profile
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ["profile", user?.id],
     queryFn: async () => {
@@ -50,6 +51,7 @@ const ProfilePage: React.FC = () => {
     enabled: !!user,
   });
 
+  // Subscription
   const { data: subscription } = useQuery({
     queryKey: ["subscription", user?.id],
     queryFn: async () => {
@@ -65,6 +67,7 @@ const ProfilePage: React.FC = () => {
     enabled: !!user,
   });
 
+  // Yogic points
   const { data: yogicPoints } = useQuery({
     queryKey: ["yogic-points", user?.id],
     queryFn: async () => {
@@ -74,6 +77,28 @@ const ProfilePage: React.FC = () => {
       });
       if (error) throw error;
       return data as number;
+    },
+    enabled: !!user,
+  });
+
+  // Stats
+  const { data: stats } = useQuery({
+    queryKey: ["user-stats", user?.id],
+    queryFn: async () => {
+      if (!user) return { videosWatched: 0, totalMinutes: 0, completed: 0 };
+      const { data, error } = await supabase
+        .from("watch_progress")
+        .select("watched_seconds, completed")
+        .eq("user_id", user.id);
+      if (error) throw error;
+
+      const totalSeconds = data.reduce((acc, p) => acc + (p.watched_seconds || 0), 0);
+
+      return {
+        videosWatched: data.length,
+        totalMinutes: Math.round(totalSeconds / 60),
+        completed: data.filter((p) => p.completed).length,
+      };
     },
     enabled: !!user,
   });
@@ -146,6 +171,7 @@ const ProfilePage: React.FC = () => {
     <UserLayout>
       <div className="content-container py-8">
         <div className="max-w-4xl mx-auto">
+          {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <h1 className="font-display text-3xl font-bold">My Profile</h1>
             <Button variant="outline" onClick={handleLogout}>
@@ -155,18 +181,52 @@ const ProfilePage: React.FC = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
+            {/* Profile Card */}
             <Card className="md:col-span-2">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Profile Information</CardTitle>
+                {!isEditing ? (
+                  <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
+                    <Edit2 className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setIsEditing(false);
+                        setFullName(profile?.full_name || "");
+                        setPhone(profile?.phone || "");
+                      }}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                    <Button size="sm" onClick={handleSave} disabled={updateProfile.isPending}>
+                      {updateProfile.isPending ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Save className="w-4 h-4 mr-2" />
+                          Save
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </CardHeader>
+
               <CardContent>
                 {profileLoading ? (
-                  <Loader2 className="w-8 h-8 animate-spin mx-auto" />
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                  </div>
                 ) : (
                   <div className="flex gap-6">
                     <Avatar className="w-24 h-24">
                       <AvatarImage src={profile?.avatar_url || undefined} />
-                      <AvatarFallback>{getInitials(profile?.full_name)}</AvatarFallback>
+                      <AvatarFallback className="text-2xl">{getInitials(profile?.full_name)}</AvatarFallback>
                     </Avatar>
 
                     <div className="flex-1 space-y-4">
@@ -197,24 +257,21 @@ const ProfilePage: React.FC = () => {
                         <Label>Member Since</Label>
                         <p>{profile?.created_at ? format(new Date(profile.created_at), "MMMM d, yyyy") : "Unknown"}</p>
                       </div>
-
-                      {isEditing ? (
-                        <Button onClick={handleSave}>Save</Button>
-                      ) : (
-                        <Button variant="outline" onClick={() => setIsEditing(true)}>
-                          Edit Profile
-                        </Button>
-                      )}
                     </div>
                   </div>
                 )}
               </CardContent>
             </Card>
 
+            {/* Right Side */}
             <div className="space-y-6">
+              {/* Subscription */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Subscription</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Crown className="w-5 h-5 text-gold" />
+                    Subscription
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {subscription?.status === "active" ? (
@@ -225,17 +282,44 @@ const ProfilePage: React.FC = () => {
                 </CardContent>
               </Card>
 
+              {/* Yogic Points */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Yogic Points</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
+                    Yogic Points
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-3xl font-bold">{yogicPoints || 0}</p>
+                  <p className="text-3xl font-bold text-primary">{yogicPoints || 0}</p>
                 </CardContent>
               </Card>
 
-              {/* ✅ UPDATED REFERRAL SECTION */}
+              {/* ✅ Referral Section (visible to ALL users) */}
               <ReferAndEarn userId={user.id} />
+
+              {/* Stats */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Stats</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Videos Watched</span>
+                    <span className="font-medium">{stats?.videosWatched || 0}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Completed</span>
+                    <span className="font-medium">{stats?.completed || 0}</span>
+                  </div>
+                  <Separator />
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Minutes Watched</span>
+                    <span className="font-medium">{stats?.totalMinutes || 0}</span>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

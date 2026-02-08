@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +10,8 @@ import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 
 export const SignupForm: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const refCode = searchParams.get('ref');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,6 +43,21 @@ export const SignupForm: React.FC = () => {
         description: error.message,
       });
     } else {
+      // Process referral if ref code exists
+      if (refCode) {
+        try {
+          // We need the new user's ID - get it from a fresh session
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user) {
+            await supabase.rpc('process_referral', {
+              _referred_user_id: session.user.id,
+              _referral_code: refCode,
+            });
+          }
+        } catch (e) {
+          console.error('Referral processing error:', e);
+        }
+      }
       toast.success('Account created!', {
         description: 'Please check your email to verify your account.',
       });

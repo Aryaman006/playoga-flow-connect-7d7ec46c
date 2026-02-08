@@ -269,6 +269,8 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          referral_code: string | null
+          referred_by: string | null
           updated_at: string
           user_id: string
         }
@@ -278,6 +280,8 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
           user_id: string
         }
@@ -287,8 +291,34 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
+          referred_by?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          created_at: string
+          id: string
+          referred_user_id: string
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          referred_user_id: string
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          referred_user_id?: string
+          referrer_id?: string
+          status?: string
         }
         Relationships: []
       }
@@ -516,9 +546,15 @@ export type Database = {
         Args: { _user_id: string; _video_id: string }
         Returns: number
       }
+      complete_referral: { Args: { _user_id: string }; Returns: undefined }
+      generate_referral_code: { Args: { _user_id: string }; Returns: string }
       get_user_yogic_points: { Args: { _user_id: string }; Returns: number }
       has_active_subscription: { Args: { _user_id: string }; Returns: boolean }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      process_referral: {
+        Args: { _referral_code: string; _referred_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       subscription_status: "free" | "active" | "expired" | "cancelled"

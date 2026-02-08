@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { ReferAndEarn } from '@/components/profile/ReferAndEarn';
 import {
   User,
   Mail,
@@ -361,6 +362,11 @@ const ProfilePage: React.FC = () => {
                   </p>
                 </CardContent>
               </Card>
+
+              {/* Referral Section */}
+              {user && (
+                <ReferAndEarn userId={user.id} hasActiveSubscription={hasActiveSubscription} />
+              )}
 
               {/* Watch Stats */}
               <Card>

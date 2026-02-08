@@ -149,6 +149,20 @@ serve(async (req) => {
       // Don't throw, subscription is already active
     }
 
+    // Complete referral if this user was referred
+    try {
+      await supabase.rpc("complete_referral", { _user_id: user.id });
+    } catch (e) {
+      console.error("Referral completion error:", e);
+    }
+
+    // Generate referral code for new subscriber
+    try {
+      await supabase.rpc("generate_referral_code", { _user_id: user.id });
+    } catch (e) {
+      console.error("Referral code generation error:", e);
+    }
+
     // Update coupon usage if used
     if (couponId) {
       try {

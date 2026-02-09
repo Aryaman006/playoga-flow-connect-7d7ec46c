@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +14,8 @@ interface ReferAndEarnProps {
 
 const COMMISSION_PER_REFERRAL = 50;
 
-export const ReferAndEarn: React.FC<ReferAndEarnProps> = ({ userId }) => {
+export const ReferAndEarn = React.forwardRef<HTMLDivElement, ReferAndEarnProps>(
+  ({ userId }, ref) => {
   const { data: referralCode } = useQuery({
     queryKey: ["referral-code", userId],
     queryFn: async () => {
@@ -99,4 +100,6 @@ export const ReferAndEarn: React.FC<ReferAndEarnProps> = ({ userId }) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+ReferAndEarn.displayName = "ReferAndEarn";

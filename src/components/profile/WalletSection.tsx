@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,7 +15,8 @@ interface WalletSectionProps {
   userId: string;
 }
 
-export const WalletSection: React.FC<WalletSectionProps> = ({ userId }) => {
+export const WalletSection = React.forwardRef<HTMLDivElement, WalletSectionProps>(
+  ({ userId }, ref) => {
   const queryClient = useQueryClient();
   const [showWithdrawForm, setShowWithdrawForm] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState("");
@@ -317,4 +319,6 @@ export const WalletSection: React.FC<WalletSectionProps> = ({ userId }) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+WalletSection.displayName = "WalletSection";

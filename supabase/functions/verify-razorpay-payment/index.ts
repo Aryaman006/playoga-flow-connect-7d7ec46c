@@ -151,7 +151,12 @@ serve(async (req) => {
 
     // Complete referral if this user was referred
     try {
-      await supabase.rpc("complete_referral", { _user_id: user.id });
+      const { error: completeReferralError } = await supabase.rpc("complete_referral", {
+        _referred_user_id: user.id,
+      });
+      if (completeReferralError) {
+        console.error("Referral completion error:", completeReferralError);
+      }
     } catch (e) {
       console.error("Referral completion error:", e);
     }

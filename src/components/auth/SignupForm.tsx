@@ -43,25 +43,10 @@ export const SignupForm: React.FC = () => {
         description: error.message,
       });
     } else {
-      // Process referral if ref code exists
-      if (refCode) {
-        try {
-          // We need the new user's ID - get it from a fresh session
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user) {
-            await supabase.rpc('process_referral', {
-              _referred_user_id: session.user.id,
-              _referral_code: refCode,
-            });
-          }
-        } catch (e) {
-          console.error('Referral processing error:', e);
-        }
-      }
       toast.success('Account created!', {
-        description: 'Please check your email to verify your account.',
+        description: 'Welcome to Playoga!',
       });
-      navigate('/login');
+      navigate('/home');
     }
 
     setIsLoading(false);

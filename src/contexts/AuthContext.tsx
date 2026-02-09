@@ -76,19 +76,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // 🔥 AUTH STATE HANDLER
+  // 🔥 AUTH STATE HANDLER - Runtime only
   useEffect(() => {
+    // Guard: ensure we're in browser environment
+    if (typeof window === 'undefined') {
+      setIsLoading(false);
+      return;
+    }
+
+    let mounted = true;
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+      
       setSession(session);
       setUser(session?.user ?? null);
 
       if (session?.user) {
         // ✅ Ensure referral code exists for EVERY user
-        await supabase.rpc("generate_referral_code", {
-          _user_id: session.user.id,
-        });
+        try {
+          await supabase.rpc("generate_referral_code", {
+            _user_id: session.user.id,
+          });
+        } catch (e) {
+          console.error("Error generating referral code:", e);
+        }
 
         checkSubscriptionStatus(session.user.id);
         fetchYogicPoints(session.user.id);
@@ -100,20 +114,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsLoading(false);
     });
 
-    // Initial session load
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Initial session load - only after auth listener is set up
+    const initSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
 
-      if (session?.user) {
-        checkSubscriptionStatus(session.user.id);
-        fetchYogicPoints(session.user.id);
+        if (session?.user) {
+          checkSubscriptionStatus(session.user.id);
+          fetchYogicPoints(session.user.id);
+        }
+      } catch (e) {
+        console.error("Error getting session:", e);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
+    };
 
-      setIsLoading(false);
-    });
+    initSession();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // 🔥 SIGN UP (WITH REFERRAL PROCESSING)

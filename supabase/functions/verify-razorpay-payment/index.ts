@@ -292,13 +292,10 @@ serve(async (req) => {
       }
     );
   } catch (error: unknown) {
-     console.error("Payment verification error", {
-       timestamp: new Date().toISOString(),
-       errorType: "VERIFICATION_ERROR",
-     });
      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+     console.error("Payment verification error v2:", errorMessage);
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: errorMessage, version: "v2" }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,

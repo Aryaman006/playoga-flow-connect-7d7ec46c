@@ -81,12 +81,21 @@ const SubscribePage: React.FC = () => {
 
   // Load Razorpay script
   useEffect(() => {
+    // Check if already loaded
+    if (window.Razorpay) {
+      console.log('[Payment] Razorpay already loaded');
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
+    script.onload = () => console.log('[Payment] Razorpay script loaded');
+    script.onerror = () => console.error('[Payment] Failed to load Razorpay script');
     document.body.appendChild(script);
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
     };
   }, []);
 

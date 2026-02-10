@@ -97,8 +97,11 @@ serve(async (req) => {
     const expiresAt = new Date();
     expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-    // Create subscription
-    const { data: subscription, error: subError } = await supabase
+    // Upsert subscription — update if exists, insert if not
+    let subscription: { id: string } | null = null;
+
+    // Try update first
+    const { data: updated, error: updateError } = await supabase
       .from("subscriptions")
       .update({
         status: "active",
@@ -110,16 +113,35 @@ serve(async (req) => {
         updated_at: new Date().toISOString(),
       })
       .eq("user_id", user.id)
-      .select()
-      .single();
+      .select("id")
+      .maybeSingle();
 
-    if (subError) {
-       console.error("Subscription operation failed", {
-         timestamp: new Date().toISOString(),
-         operation: "update",
-         errorType: "SUBSCRIPTION_ERROR",
-       });
-      throw new Error("Failed to update subscription");
+    if (updated) {
+      subscription = updated;
+    } else {
+      // No existing row — insert a new one
+      const { data: inserted, error: insertError } = await supabase
+        .from("subscriptions")
+        .insert({
+          user_id: user.id,
+          status: "active",
+          plan_name: "Premium Yearly",
+          starts_at: startsAt.toISOString(),
+          expires_at: expiresAt.toISOString(),
+          amount_paid: totalAmount,
+          gst_amount: gstAmount,
+        })
+        .select("id")
+        .single();
+
+      if (insertError || !inserted) {
+        console.error("Subscription insert failed", {
+          timestamp: new Date().toISOString(),
+          errorType: "SUBSCRIPTION_INSERT_ERROR",
+        });
+        throw new Error("Failed to create subscription");
+      }
+      subscription = inserted;
     }
 
     // Create payment record

@@ -97,12 +97,21 @@ serve(async (req) => {
     const expiresAt = new Date();
     expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-    // Upsert subscription using Supabase upsert with onConflict
-    const { data: subscription, error: subError } = await supabase
+    // Check if subscription already exists for this user
+    const { data: existingSub } = await supabase
       .from("subscriptions")
-      .upsert(
-        {
-          user_id: user.id,
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    let subscription: { id: string } | null = null;
+    let subError: any = null;
+
+    if (existingSub) {
+      // Update existing subscription
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .update({
           status: "active",
           plan_name: "Premium Yearly",
           starts_at: startsAt.toISOString(),
@@ -110,17 +119,36 @@ serve(async (req) => {
           amount_paid: totalAmount,
           gst_amount: gstAmount,
           updated_at: new Date().toISOString(),
-        },
-        { onConflict: "user_id" }
-      )
-      .select("id")
-      .single();
+        })
+        .eq("user_id", user.id)
+        .select("id")
+        .single();
+      subscription = data;
+      subError = error;
+    } else {
+      // Insert new subscription
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .insert({
+          user_id: user.id,
+          status: "active",
+          plan_name: "Premium Yearly",
+          starts_at: startsAt.toISOString(),
+          expires_at: expiresAt.toISOString(),
+          amount_paid: totalAmount,
+          gst_amount: gstAmount,
+        })
+        .select("id")
+        .single();
+      subscription = data;
+      subError = error;
+    }
 
     if (subError || !subscription) {
-      console.error("Subscription upsert error:", JSON.stringify(subError));
+      console.error("Subscription error:", JSON.stringify(subError));
       throw new Error(`Subscription error: ${subError?.message || "unknown"}`);
     }
-    console.log("Subscription upserted:", subscription.id);
+    console.log("Subscription saved:", subscription.id);
 
     // Create payment record
     const invoiceNumber = generateInvoiceNumber();

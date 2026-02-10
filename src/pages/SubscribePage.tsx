@@ -140,14 +140,18 @@ const SubscribePage: React.FC = () => {
 
     try {
       const { data: session } = await supabase.auth.getSession();
+      console.log('[Payment] Session check:', !!session?.session?.access_token);
       if (!session?.session?.access_token) {
         throw new Error('Please log in to continue');
       }
 
       // Create order
+      console.log('[Payment] Creating Razorpay order...');
       const orderResponse = await supabase.functions.invoke('create-razorpay-order', {
         body: { amount: basePrice, couponCode: couponCode || undefined },
       });
+
+      console.log('[Payment] Order response:', JSON.stringify(orderResponse.data), 'Error:', JSON.stringify(orderResponse.error));
 
       if (orderResponse.error) {
         throw new Error(orderResponse.error.message || 'Failed to create order');

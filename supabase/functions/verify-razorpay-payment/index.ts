@@ -97,37 +97,11 @@ serve(async (req) => {
     const expiresAt = new Date();
     expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
-    // Upsert subscription — update if exists, insert if not
-    let subscription: { id: string } | null = null;
-
-    // Try update first
-    const { data: updated, error: updateError } = await supabase
+    // Upsert subscription using Supabase upsert with onConflict
+    const { data: subscription, error: subError } = await supabase
       .from("subscriptions")
-      .update({
-        status: "active",
-        plan_name: "Premium Yearly",
-        starts_at: startsAt.toISOString(),
-        expires_at: expiresAt.toISOString(),
-        amount_paid: totalAmount,
-        gst_amount: gstAmount,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("user_id", user.id)
-      .select("id")
-      .maybeSingle();
-
-    if (updateError) {
-      console.error("Subscription update error details:", JSON.stringify(updateError));
-    }
-
-    if (updated) {
-      subscription = updated;
-    } else {
-      console.log("No existing subscription row, inserting new one for user:", user.id);
-      // No existing row — insert a new one
-      const { data: inserted, error: insertError } = await supabase
-        .from("subscriptions")
-        .insert({
+      .upsert(
+        {
           user_id: user.id,
           status: "active",
           plan_name: "Premium Yearly",
@@ -135,16 +109,18 @@ serve(async (req) => {
           expires_at: expiresAt.toISOString(),
           amount_paid: totalAmount,
           gst_amount: gstAmount,
-        })
-        .select("id")
-        .single();
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      )
+      .select("id")
+      .single();
 
-      if (insertError || !inserted) {
-        console.error("Subscription insert error details:", JSON.stringify(insertError));
-        throw new Error(`Failed to create subscription: ${insertError?.message || "unknown error"}`);
-      }
-      subscription = inserted;
+    if (subError || !subscription) {
+      console.error("Subscription upsert error:", JSON.stringify(subError));
+      throw new Error(`Subscription error: ${subError?.message || "unknown"}`);
     }
+    console.log("Subscription upserted:", subscription.id);
 
     // Create payment record
     const invoiceNumber = generateInvoiceNumber();

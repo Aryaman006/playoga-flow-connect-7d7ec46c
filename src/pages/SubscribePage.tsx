@@ -151,10 +151,16 @@ const SubscribePage: React.FC = () => {
         body: { amount: basePrice, couponCode: couponCode || undefined },
       });
 
-      console.log('[Payment] Order response:', JSON.stringify(orderResponse.data), 'Error:', JSON.stringify(orderResponse.error));
+      console.log('[Payment] Order response data:', JSON.stringify(orderResponse.data));
+      console.log('[Payment] Order response error:', JSON.stringify(orderResponse.error));
 
       if (orderResponse.error) {
         throw new Error(orderResponse.error.message || 'Failed to create order');
+      }
+
+      // Edge function may return error in data body
+      if (orderResponse.data?.error) {
+        throw new Error(orderResponse.data.error);
       }
 
       const { orderId, amount, keyId, prefill, notes } = orderResponse.data;

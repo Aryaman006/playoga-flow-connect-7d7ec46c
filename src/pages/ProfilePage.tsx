@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
-import { ReferAndEarn } from "@/components/profile/ReferAndEarn";
+
 import { WalletSection } from "@/components/profile/WalletSection";
 import { User, Mail, Phone, Crown, Sparkles, Calendar, Edit2, Save, X, Loader2, LogOut } from "lucide-react";
 import { format } from "date-fns";
@@ -296,8 +296,6 @@ const ProfilePage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* ✅ Referral Section */}
-              <ReferAndEarn userId={user.id} />
 
               {/* ✅ Wallet Section */}
               <WalletSection userId={user.id} />

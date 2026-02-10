@@ -97,14 +97,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(session?.user ?? null);
 
       if (session?.user) {
-        // ✅ Ensure referral code exists for EVERY user
-        try {
-          await supabase.rpc("generate_referral_code", {
-            _user_id: session.user.id,
-          });
-        } catch (e) {
-          console.error("Error generating referral code:", e);
-        }
 
         checkSubscriptionStatus(session.user.id);
         fetchYogicPoints(session.user.id);
@@ -146,7 +138,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  // 🔥 SIGN UP (WITH REFERRAL PROCESSING)
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -159,17 +150,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           },
         },
       });
-
-      if (!error && data?.user) {
-        const referralCode = new URLSearchParams(window.location.search).get("ref");
-
-        if (referralCode) {
-          await supabase.rpc("process_referral", {
-            _referred_user_id: data.user.id,
-            _referral_code: referralCode,
-          });
-        }
-      }
 
       return { error };
     } catch (error) {

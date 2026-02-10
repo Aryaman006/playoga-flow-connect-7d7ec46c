@@ -116,9 +116,14 @@ serve(async (req) => {
       .select("id")
       .maybeSingle();
 
+    if (updateError) {
+      console.error("Subscription update error details:", JSON.stringify(updateError));
+    }
+
     if (updated) {
       subscription = updated;
     } else {
+      console.log("No existing subscription row, inserting new one for user:", user.id);
       // No existing row — insert a new one
       const { data: inserted, error: insertError } = await supabase
         .from("subscriptions")
@@ -135,11 +140,8 @@ serve(async (req) => {
         .single();
 
       if (insertError || !inserted) {
-        console.error("Subscription insert failed", {
-          timestamp: new Date().toISOString(),
-          errorType: "SUBSCRIPTION_INSERT_ERROR",
-        });
-        throw new Error("Failed to create subscription");
+        console.error("Subscription insert error details:", JSON.stringify(insertError));
+        throw new Error(`Failed to create subscription: ${insertError?.message || "unknown error"}`);
       }
       subscription = inserted;
     }

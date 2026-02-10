@@ -198,7 +198,16 @@ const SubscribePage: React.FC = () => {
             });
 
             if (verifyResponse.error) {
-              throw new Error(verifyResponse.error.message || 'Payment verification failed');
+              // Try to extract detailed error from response
+              let detail = 'Payment verification failed';
+              try {
+                const ctx = (verifyResponse.error as any).context;
+                if (ctx && typeof ctx.json === 'function') {
+                  const body = await ctx.json();
+                  detail = body?.error || detail;
+                }
+              } catch { /* ignore */ }
+              throw new Error(detail);
             }
 
             toast.success('Payment successful! Welcome to Premium!');
